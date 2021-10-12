@@ -78,3 +78,24 @@ fabric.properties
 db.sqlite3
 
 .idea/
+
+### Python ### # Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+*/ __pycache__ /*
+
+
+__pycache__/
+
+__pycache__/*
+
+*.pyc
+
+
+**/__pycache__/
+
+!**/migrations/**/__pycache__/
+
+
