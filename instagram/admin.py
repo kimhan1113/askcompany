@@ -3,7 +3,8 @@ from django.contrib import admin
 # Register your models here.
 from django.utils.safestring import mark_safe
 
-from instagram.models import Post
+from instagram.models import Post, Comment
+
 
 # admin.site.register(Post)
 
@@ -25,6 +26,11 @@ class PostAdmin(admin.ModelAdmin):
         if post.photo:
             return mark_safe(f'<img src="{post.photo.url}" style="width: 100px;" />')
         return None
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    pass
 
 
 
