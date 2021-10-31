@@ -21,10 +21,15 @@ from django.urls import path, include
 # 아래 두개처럼 쓰면 안됨
 # from django.conf import global_settings
 # from askcompany import settings
-
-
+from django.views.generic import TemplateView, RedirectView
 
 urlpatterns = [
+    # path('', TemplateView.as_view(template_name='root.html'), name='root'),
+
+    # path('', RedirectView.as_view(url='/instagram/'), name='root'),
+    # 위랑 결과는 똑같지만 장고는 아래방식을 더 선호
+    path('', RedirectView.as_view(pattern_name='instagram:post_list'), name='root'),
+
     path('admin/', admin.site.urls),
     path('blog1/', include('blog1.urls')),
     path('instagram/', include('instagram.urls')),
