@@ -7,7 +7,7 @@ from django.views.generic import ListView, DetailView
 from instagram.models import Post
 
 
-post_list = ListView.as_view(model=Post)
+post_list = ListView.as_view(model=Post, paginate_by=1)
 
 
 # def post_list(request):
@@ -39,7 +39,22 @@ post_list = ListView.as_view(model=Post)
 
 
 # 위 함수형 코드랑 동일함!!
-post_detail = DetailView.as_view(model=Post)
+# post_detail = DetailView.as_view(
+#     model=Post,
+#     queryset=Post.objects.filter(is_public=True))
+
+class PostDetailView(DetailView):
+    model = Post
+    # queryset = Post.objects.filter(is_public=True)
+
+    def get_queryset(self):
+        # 로그인이 되어있지 않으면 공개된것만 봐라!
+        qs = super().get_queryset()
+        if not self.request.user.is_authenticated:
+            qs = qs.filter(is_public=True)
+        return qs
+
+post_detail = PostDetailView.as_view()
 
 
 
