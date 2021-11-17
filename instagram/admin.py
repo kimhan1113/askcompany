@@ -21,6 +21,7 @@ class PostAdmin(admin.ModelAdmin):
 
     # 찾는 필터 생성 (여러가지 추가해서 필터걸수있다 지금은 ok랑 메세지 걸어서 둘다 찾을수있다)
     search_fields = ['pk', 'message']
+    # form = PostForm
 
     def photo_tag(self, post):
         if post.photo:

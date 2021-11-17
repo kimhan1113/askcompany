@@ -1,7 +1,7 @@
 from django.urls import path, re_path, register_converter
 
 from instagram.converters import YearConverter, MonthConverter, DayConverter
-from instagram.views import post_list, post_detail, post_archive, post_archive_year
+from instagram.views import post_list, post_detail, post_archive, post_archive_year, post_new, post_edit
 
 # from instagram.views import archives_year
 
@@ -17,8 +17,12 @@ register_converter(DayConverter, 'day')
 # Post.objects.all().values_list('create_at__year', flat=True)
 
 urlpatterns = [
+    path('new/', post_new, name='post_new'),
+    path('<int:pk>/edit/', post_edit, name='post_edit'),
+
     path('', post_list, name='post_list'),
-    path('<int:pk>', post_detail),
+    path('<int:pk>', post_detail, name='post_detail'),
+
     # re_path(r'archives/(?P<year>\d+)/', archives_year),
 
     # 숫자 4개만 입력받음

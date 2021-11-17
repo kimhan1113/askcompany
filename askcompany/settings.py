@@ -14,6 +14,8 @@ from pathlib import Path
 import environ
 import os
 
+from django.contrib.messages import constants as messages_constants
+
 env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False)
@@ -138,7 +140,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -151,6 +157,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 INTERNAL_IPS = [
     '127.0.0.1'
 ]
+
+# 부트스트랩과 장고 message 매핑을 위해 설정해줌!!!
+MESSAGE_TAGS = {
+    messages_constants.DEBUG: 'secondary',
+    messages_constants.ERROR: 'danger',
+}
+
 
 # 프로젝트 생성하자마자 해주는것이 좋다! 삽질을 줄일 수 있다
 # AUTH_USER_MODEL = 'instagram.User'

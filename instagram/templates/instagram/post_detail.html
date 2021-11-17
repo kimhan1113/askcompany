@@ -1,10 +1,29 @@
-<h2>Author: {{ post.author }}</h2>
+{% extends "instagram/layout.html" %}
 
-{% if post.photo %}
-    <div>
-        <img src="{{ post.photo.url }}" alt="">
-    </div>
+{% block title %}
+    Post Detail pk#{{ post.pk }}
+{% endblock %}
 
-{% endif %}
+{% block content %}
+    <h2>Author: {{ post.author }}</h2>
 
-{{ post.message }}
+        {% if post.photo %}
+            <div>
+                <img src="{{ post.photo.url }}" alt="">
+            </div>
+
+        {% endif %}
+
+{#    linebreaks를 넣어야 개행이 적용된다#}
+    {{ post.message|linebreaks }}
+    <hr>
+    <a href="{% url 'instagram:post_list' %}" class="btn btn-primary">
+        목록
+    </a>
+
+    <a href="{% url 'instagram:post_edit' post.pk %}" class="btn btn-info">
+        수정
+    </a>
+{% endblock content %}
+
+
