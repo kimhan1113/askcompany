@@ -1,0 +1,20 @@
+{% extends 'accounts/layout.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+    {% if not user.is_authenticated %}
+
+    <div style="text-align: center; max-width: 500px; margin: 4rem auto;">
+        <form action="" method="post">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+    {#        <table>#}
+    {#            {{ form }}#}
+    {#        </table>#}
+            <input type="submit" value="Login" class="btn btn-primary mt-2"/>
+        </form>
+    </div>
+
+    {% endif %}
+
+{% endblock content %}

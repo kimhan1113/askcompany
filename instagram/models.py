@@ -12,7 +12,7 @@ from django.urls import reverse
 
 class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    message = models.TextField(validators=[MinLengthValidator(10)])
+    message = models.TextField(validators=[MinLengthValidator(5)])
     # upload_to 는 미디어파일저장되는 경로를바꾼다 media다 저장되면 찾기 힘듬으로...
     photo = models.ImageField(blank=True, upload_to='instagram/post/%Y%m%d')
     tag_set = models.ManyToManyField('Tag', blank=True)

@@ -12,6 +12,7 @@ class PostForm(ModelForm):
             'message', 'photo', 'tag_set', 'is_public',
         ]
 
+
         # exclude는 비추 새로운 필드가 추가되었을 경우 바로 노출되기 때문에....
         # exclude = []
 

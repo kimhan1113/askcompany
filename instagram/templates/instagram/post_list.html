@@ -7,13 +7,13 @@
 
 {% block content %}
     {#    action이 비워있으면 현재 폼이 있는경로#}
-    <form action="" method="get">
-        <div class="input-group col-lg-3 mb-2">
-            <input class="form-control" name="q" value="{{ q }}">
-            <input type="submit" class="btn btn-primary" value="검색">
-        </div>
-
-    </form>
+{#    <form action="" method="get">#}
+{#        <div class="input-group col-lg-3 mb-2">#}
+{#            <input class="form-control" name="q" value="{{ q }}">#}
+{#            <input type="submit" class="btn btn-primary" value="검색">#}
+{#        </div>#}
+{##}
+{#    </form>#}
 
     <a href="{% url 'instagram:post_new' %}" class="btn btn-primary btn-block mt-3 mb-3">새 포스팅</a>
 

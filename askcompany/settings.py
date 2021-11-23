@@ -15,6 +15,7 @@ import environ
 import os
 
 from django.contrib.messages import constants as messages_constants
+from django.urls import reverse, reverse_lazy
 
 env = environ.Env(
     # set casting, default value
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     # local apps
     'blog1',
     'instagram',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -164,6 +166,9 @@ MESSAGE_TAGS = {
     messages_constants.ERROR: 'danger',
 }
 
+LOGIN_REDIRECT_URL = reverse_lazy('instagram:post_list')
+LOGOUT_REDIRECT_URL = reverse_lazy('instagram:post_list')
+# LOGIN_URL = reverse_lazy('instagram:post_list')
 
 # 프로젝트 생성하자마자 해주는것이 좋다! 삽질을 줄일 수 있다
 # AUTH_USER_MODEL = 'instagram.User'

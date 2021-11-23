@@ -1,0 +1,18 @@
+{% extends 'accounts/layout.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+    <div style="text-align: center; max-width: 500px; margin: 4rem auto;">
+        <form action="" method="post">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% buttons %}
+                <button class="btn btn-primary">프로필 수정</button>
+            {% endbuttons %}
+{#            <input type="button" value="프로필 수정" class="btn btn-primary mt-2"/>#}
+        </form>
+    </div>
+
+
+
+{% endblock content %}
