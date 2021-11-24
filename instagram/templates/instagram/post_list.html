@@ -18,37 +18,58 @@
     <a href="{% url 'instagram:post_new' %}" class="btn btn-primary btn-block mt-3 mb-3">새 포스팅</a>
 
     <table class="table table-bordered table-hover">
+        <thead>
+            <th>포스트 번호</th>
+            <th>미터점</th>
+            <th>이미지</th>
+            <th>메세지</th>
+            <th>등록날짜</th>
+
+        </thead>
+
         <tbody>
             {% for post in post_list %}
-            <tr>
-                <td>
-                    {{ post.pk }}
-                </td>
-                <td>
-                    {% if post.photo %}
-                        <img src="{{ post.photo.url }}" alt="" style="width: 100px;">
-                    {% else %}
-                            No Photo
-                    {% endif %}
 
-                </td>
-                <td>
-{#                    <a href="{% url 'instagram:post_detail' post.pk %}">#}
-                    <a href="{{ post.get_absolute_url }}">
-                        {{ post.message }}
-                    </a>
+                <tr>
+                    <td>
+                        {{ post.pk }}
+                    </td>
 
-{#                    </a>#}
-                </td>
-            </tr>
+                    <td>
+                        {{ post.author }}
+                    </td>
+
+                    <td>
+                        {% if post.photo %}
+                            <img src="{{ post.photo.url }}" alt="" style="width: 300px;">
+                        {% else %}
+                                No Photo
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+    {#                    <a href="{% url 'instagram:post_detail' post.pk %}">#}
+                        <div style="max-width: 250px;">
+                            <a href="{{ post.get_absolute_url }}">
+                                {{ post.message }}
+                            </a>
+                        </div>
+    {#                    </a>#}
+                    </td>
+                    <td>
+                        {{ post.created_at }}
+                    </td>
+
+                </tr>
             {% endfor %}
+
         </tbody>
     </table>
-
-{#    {{ is_paginated }}#}
     {{ page.obj }}
-
     {% if is_paginated %}
         {% bootstrap_pagination page_obj size="small" justify_content="center" %}
     {% endif %}
+{#    {{ is_paginated }}#}
+
 {% endblock content %}

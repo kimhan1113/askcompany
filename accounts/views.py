@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model, login as auth_login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -12,10 +13,14 @@ from django.views.generic import TemplateView, UpdateView, CreateView
 # @login_required
 # def profile(request):
 #     return render(request, 'accounts/profile.html')
-from accounts.forms import ProfileForm
+from accounts.forms import ProfileForm, PasswordChangingForm
 from accounts.models import Profile
 
 User = get_user_model()
+
+class PasswordsChangeView(PasswordChangeView):
+    form_class = PasswordChangingForm
+    success_url = reverse_lazy('accounts:profile')
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):
@@ -58,11 +63,14 @@ class SignupView(CreateView):
     template_name = 'accounts/signup_form.html'
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        user = self.object
-        auth_login(self.request, user)
 
-        return response
+        if self.request.method == "POST":
+            form = ProfileForm(self.request.POST, instance=get_user_model())
+            if form.is_valid():
+                profile = form.save(commit=False)
+                profile.user = self.request.user
+                profile.save()
+
 
 signup = SignupView.as_view()
 
@@ -74,8 +82,9 @@ signup = SignupView.as_view()
 # )
 
 
+
 # def signup(request):
 #     pass
 
-def logout(request):
-    pass
+# def logout(request):
+#     pass

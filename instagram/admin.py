@@ -11,7 +11,7 @@ from instagram.models import Post, Comment, Tag
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'photo_tag', 'message', 'message_length', 'is_public', 'created_at', 'updated_at']
+    list_display = ['pk', 'author','photo_tag', 'message', 'message_length', 'is_public', 'created_at', 'updated_at']
 
     # 메세지에 링크가 잡힘
     list_display_links = ['message']

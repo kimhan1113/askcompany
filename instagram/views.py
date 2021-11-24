@@ -49,13 +49,15 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
 post_delete = PostDeleteView.as_view()
 
 
-
+# @method_decorator(post_ownership_required, 'get')
 class PostListView(LoginRequiredMixin, ListView):
     model = Post
     paginate_by = 4
 
     def get_queryset(self):
-        qs = Post.objects.all()
+        qs = super().get_queryset().filter(author=self.request.user)
+        # qs = Post.objects.all()
+
         q = self.request.GET.get('q', '')
         if q:
             qs = qs.filter(message__icontains=q)
@@ -183,17 +185,18 @@ class MyView(LoginRequiredMixin, View):
 #     model=Post,
 #     queryset=Post.objects.filter(is_public=True))
 
+# @method_decorator(post_ownership_required, 'get')
 class PostDetailView(DetailView):
     model = Post
+    # queryset = Post.objects.filter(author_id=)
 
-    # queryset = Post.objects.filter(is_public=True)
-
-    # def get_queryset(self):
-    #     # 로그인이 되어있지 않으면 공개된것만 봐라!
-    #     qs = super().get_queryset()
-    #     if not self.request.user.is_authenticated:
-    #         qs = qs.filter(is_public=True)
-    #     return qs
+    def get_queryset(self):
+        # 로그인이 되어있지 않으면 공개된것만 봐라!
+        # qs = super().get_queryset()
+        qs = super().get_queryset().filter(author=self.request.user)
+        # if not self.request == :
+        #     qs = qs.filter(is_public=True)
+        return qs
 
 post_detail = PostDetailView.as_view()
 
