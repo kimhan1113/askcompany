@@ -9,7 +9,7 @@ class PostForm(ModelForm):
     class Meta:
         model = Post
         fields = [
-            'message', 'photo', 'tag_set', 'is_public',
+            'message', 'photo', 'car_number', 'fran_name', 'as_1', 'as_2', 'as_3'
         ]
 
 

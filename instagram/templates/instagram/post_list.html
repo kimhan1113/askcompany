@@ -15,12 +15,19 @@
 {##}
 {#    </form>#}
 
-    <a href="{% url 'instagram:post_new' %}" class="btn btn-primary btn-block mt-3 mb-3">새 포스팅</a>
+
 
     <table class="table table-bordered table-hover">
-        <thead>
+        <div class="mb-2">
+            ※ 업로드 후 하루가 지나면 수정할 수 없습니다.
+        </div>
+        <thead class="table-secondary">
+
             <th>포스트 번호</th>
+            <th>운수사</th>
             <th>미터점</th>
+            <th>차량 번호</th>
+            <th>A/S 품목 건수</th>
             <th>이미지</th>
             <th>메세지</th>
             <th>등록날짜</th>
@@ -36,7 +43,19 @@
                     </td>
 
                     <td>
+                        {{ post.fran_name }}
+                    </td>
+
+                    <td>
                         {{ post.author }}
+                    </td>
+
+                    <td>
+                        {{ post.car_number }}
+                    </td>
+
+                    <td>
+                        {{ post.sum_as }}건
                     </td>
 
                     <td>
@@ -66,6 +85,7 @@
 
         </tbody>
     </table>
+    <a href="{% url 'instagram:post_new' %}" class="btn btn-primary btn-block col-sm-2 mt-3 mb-3">새 포스팅</a>
     {{ page.obj }}
     {% if is_paginated %}
         {% bootstrap_pagination page_obj size="small" justify_content="center" %}

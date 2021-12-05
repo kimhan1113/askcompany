@@ -1,7 +1,8 @@
 from django.urls import path, re_path, register_converter
 
 from instagram.converters import YearConverter, MonthConverter, DayConverter
-from instagram.views import post_list, post_detail, post_archive, post_archive_year, post_new, post_edit, post_delete
+from instagram.views import post_list, post_detail, post_archive, post_archive_year, post_new, post_edit, post_delete, \
+    response_csv
 
 # from instagram.views import archives_year
 
@@ -34,6 +35,7 @@ urlpatterns = [
 
     path('archive/', post_archive, name='post_archive'),
     path('archive/<year:year>/', post_archive_year, name='post_archive_year'),
+    path('pandas/', response_csv, name='pandas'),
     # path('archive/<year:year>/<month:month>/', post_archive_month, name='post_archive_month'),
     # path('archive/<year:year>/<month:month>/<day:Day>', post_archive_day, name='post_archive_day'),
 

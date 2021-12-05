@@ -1,3 +1,11 @@
+from datetime import datetime, timedelta
+from urllib.parse import quote
+
+
+import pandas as pd
+from io import StringIO
+from django.http import HttpResponse
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,6 +14,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 # Create your views here.
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import ListView, DetailView, ArchiveIndexView, YearArchiveView, CreateView, UpdateView, \
@@ -52,10 +61,17 @@ post_delete = PostDeleteView.as_view()
 # @method_decorator(post_ownership_required, 'get')
 class PostListView(LoginRequiredMixin, ListView):
     model = Post
-    paginate_by = 4
+    paginate_by = 10
+
+
 
     def get_queryset(self):
+        #created_at__gte = timezone.now() - datetime.timedelta(days=1)
+        # qs = super().get_queryset().filter(author=self.request.user, created_at__gte = timezone.now() - timedelta(days=1))
+
         qs = super().get_queryset().filter(author=self.request.user)
+        # print(self.request.created_at)
+
         # qs = Post.objects.all()
 
         q = self.request.GET.get('q', '')
@@ -136,6 +152,16 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
 
+    def get_queryset(self):
+        # 로그인이 되어있지 않으면 공개된것만 봐라!
+        # qs = super().get_queryset()
+        qs = super().get_queryset().filter(author=self.request.user)
+        # if not self.request == :
+        #     qs = qs.filter(is_public=True)
+        return qs
+
+
+
     def form_valid(self, form):
         messages.success(self.request, '포스팅을 수정했습니다.')
         return super().form_valid(form)
@@ -190,19 +216,47 @@ class PostDetailView(DetailView):
     model = Post
     # queryset = Post.objects.filter(author_id=)
 
+    yesterday = datetime.today() - timedelta(days=1)
+    # print()
+    # print(yesterday)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["yesterday"] = self.yesterday
+        return context
+
+
     def get_queryset(self):
         # 로그인이 되어있지 않으면 공개된것만 봐라!
         # qs = super().get_queryset()
+
+        # qs = super().get_queryset().filter(author=self.request.user, created_at__gte=timezone.now() - timedelta(days=1))
         qs = super().get_queryset().filter(author=self.request.user)
         # if not self.request == :
         #     qs = qs.filter(is_public=True)
         return qs
+
 
 post_detail = PostDetailView.as_view()
 
 post_archive = ArchiveIndexView.as_view(model=Post, date_field='created_at', paginate_by=1)
 
 post_archive_year = YearArchiveView.as_view(model=Post, date_field='created_at', make_object_list=True)
+
+@login_required
+def response_csv(request):
+    df = pd.DataFrame([
+        [100, 110, 120],
+        [200, 210, 220],
+        [300, 310, 320],
+    ])
+    encoded_filename = quote('pandas.csv')
+    io = StringIO()
+    df.to_csv(io)
+    io.seek(0) # 끝에 있는 file cursor를 처음으로 이동
+    response = HttpResponse(io, content_type='text/csv')
+    response['Content-Disposition'] = "attachment; filename*=utf-8''{}".format(encoded_filename)
+    return response
 
 
 # def archives_year(request, year):

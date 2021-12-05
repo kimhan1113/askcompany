@@ -62,14 +62,15 @@ class SignupView(CreateView):
     success_url = reverse_lazy('instagram:post_list')
     template_name = 'accounts/signup_form.html'
 
-    def form_valid(self, form):
-
-        if self.request.method == "POST":
-            form = ProfileForm(self.request.POST, instance=get_user_model())
-            if form.is_valid():
-                profile = form.save(commit=False)
-                profile.user = self.request.user
-                profile.save()
+    # def form_valid(self, form):
+    #
+    #     if self.request.method == "POST":
+    #         #
+    #         form = ProfileForm(self.request.POST, instance = get_user_model())
+    #         if form.is_valid():
+    #             profile = form.save(commit=False)
+    #             profile.user = self.request.user
+    #             profile.save()
 
 
 signup = SignupView.as_view()

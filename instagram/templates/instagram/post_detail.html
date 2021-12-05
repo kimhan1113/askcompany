@@ -1,10 +1,17 @@
 {% extends "instagram/layout.html" %}
+{% load tz %}
+{% load sub_filter %}
+{% load humanize %}
+{% load display_fieldname %}
+
 
 {% block title %}
     Post Detail pk#{{ post.pk }}
 {% endblock title %}
 
 {% block content %}
+
+
     <h2>Author: {{ post.author }}</h2>
 
         {% if post.photo %}
@@ -19,18 +26,39 @@
         {{ post.message|linebreaks }}
     </div>
 
+{#    대상이 있으면 yesno로 표기해서 나타낼 수 있다.#}
+    <div>
+    목록
+        <ul>
+            <li>
+                {{ post.as_1|yesno:"as_1,as_2"}}
+            </li>
+        </ul>
+
+    </div>
+
     <hr>
     <a href="{% url 'instagram:post_list' %}" class="btn btn-primary">
         목록
     </a>
 
-    <a href="{% url 'instagram:post_edit' post.pk %}" class="btn btn-info">
-        수정
-    </a>
 
+
+    {% now "" as todays_date %}
+
+{#    {{ post.created_at|date:"Y-m-d h:i:s" }}#}
+
+    {% if post.created_at|date:"Y-m-d h:i:s" > yesterday|date:"Y-m-d h:i:s" %}
+        <a href="{% url 'instagram:post_edit' post.pk %}" class="btn btn-info">
+            수정
+        </a>
+    {% endif %}
+{#    {{ yesterday }}#}
     <a href="{% url 'instagram:post_delete' post.pk %}" class="btn btn-danger">
         삭제
     </a>
+
+{#    {{ post.created_at|timesince }}#}
 {% endblock content %}
 
 

@@ -15,12 +15,36 @@ class Post(models.Model):
     message = models.TextField(validators=[MinLengthValidator(5)])
     # upload_to 는 미디어파일저장되는 경로를바꾼다 media다 저장되면 찾기 힘듬으로...
     photo = models.ImageField(blank=True, upload_to='instagram/post/%Y%m%d')
+
+    # 차량번호
+    car_number = models.CharField(max_length=11, blank=True)
+    # 운수사명
+    fran_name = models.CharField(max_length=10, blank=True)
+
+    # A/S 리스트 Boolean
+    as_1 = models.BooleanField(default=False, verbose_name='as_1')
+    as_2 = models.BooleanField(default=False, verbose_name='as_2')
+    as_3 = models.BooleanField(default=False, verbose_name='as_3')
+
     tag_set = models.ManyToManyField('Tag', blank=True)
-    is_public = models.BooleanField(default=False, verbose_name='공개여부')
+    is_public = models.BooleanField(default=False, verbose_name='공개여부', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     # Detail뷰가 구현이 되었다면 무조건 모델클래스에 get_absolute_url메소드를 구현하자!!!!!!!!!!
+
+    @property
+    def sum_as(self):
+        count = 0
+        if self.as_1:
+            count += 1
+        if self.as_2:
+            count += 1
+        if self.as_3:
+            count += 1
+
+        return count
+
 
     def __str__(self):
         return self.message
