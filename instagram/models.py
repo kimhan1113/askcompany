@@ -1,6 +1,9 @@
+from datetime import timedelta, datetime
+
 from django.conf import settings
 from django.core.validators import MinLengthValidator
 from django.db import models
+import pytz
 
 # Create your models here.
 
@@ -14,7 +17,7 @@ class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     message = models.TextField(validators=[MinLengthValidator(5)])
     # upload_to 는 미디어파일저장되는 경로를바꾼다 media다 저장되면 찾기 힘듬으로...
-    photo = models.ImageField(blank=True, upload_to='instagram/post/%Y%m%d')
+
 
     # 차량번호
     car_number = models.CharField(max_length=11, blank=True)
@@ -25,6 +28,8 @@ class Post(models.Model):
     as_1 = models.BooleanField(default=False, verbose_name='as_1')
     as_2 = models.BooleanField(default=False, verbose_name='as_2')
     as_3 = models.BooleanField(default=False, verbose_name='as_3')
+
+    photo = models.ImageField(blank=True, upload_to='instagram/post/%Y%m%d')
 
     tag_set = models.ManyToManyField('Tag', blank=True)
     is_public = models.BooleanField(default=False, verbose_name='공개여부', blank=True)
@@ -45,6 +50,38 @@ class Post(models.Model):
 
         return count
 
+    # - timedelta(seconds=86400)
+
+    def created_yesterday(self):
+        return self.created_at - timedelta(seconds=86400)
+
+    @property
+    def check_oneday(self):
+        local_tz = pytz.timezone('Asia/Seoul')
+        utc = pytz.UTC
+        created_at = self.created_at.replace(tzinfo=pytz.utc).astimezone(local_tz).timestamp()
+        yesterday = (datetime.today() - timedelta(days=1.5)).replace(tzinfo=pytz.utc).timestamp()
+
+
+        # created_at_date = self.created_at.replace(tzinfo=pytz.utc).astimezone(local_tz)
+        # yesterday_date = (datetime.today() - timedelta(days=1.5)).replace(tzinfo=pytz.utc)
+
+        # print(created_yesterday.replace(tzinfo=pytz.utc).astimezone(local_tz))
+        # print(created_yesterday.replace(tzinfo=None))
+        # print(yesterday.replace(tzinfo=None))
+
+        # print(created_at_date)
+        # print(yesterday_date)
+
+        # print(created_at)
+        # print(yesterday)
+
+        if(created_at > yesterday):
+            return True
+        else:
+            return False
+
+        # return self.created_at - timedelta(seconds=86400)
 
     def __str__(self):
         return self.message
@@ -71,14 +108,24 @@ class Comment(models.Model):
     # post = models.ForeignKey('Post', on_delete=models.CASCADE)
 
     # limit_choices_to 를 true로 하면 is_public에서 true인값만 나옴!
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, limit_choices_to=True) # post_id 필드가 생성된다.
+    post = models.ForeignKey(Post, on_delete=models.CASCADE) # post_id 필드가 생성된다.
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        if(self.message):
+            return self.message
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
+
+class PostImage(models.Model):
+    post = models.ForeignKey(Post, default=None, on_delete=models.CASCADE, null=True)
+    image = models.ImageField(upload_to='instagram/post/%Y%m%d', blank=True)
+
+    # def __str__(self):
+    #     return self.post.message

@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 
 from django import template
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,date
+
 
 from django.utils.timesince import timesince
 
@@ -11,16 +12,24 @@ from instagram.models import Post
 register = template.Library()
 
 @register.filter
-def time_until(value):
-    qs = Post.objects.filter(created_at__gte=timezone.now() - timedelta(days=1))
-    now = datetime.now()
-    print(now)
-    try:
-        difference = value - now
-    except:
-        print('에러!')
-        return value
+def get_type(value):
+    return type(value)
 
-    if difference <= timedelta(days=1):
-        return 'just now'
-    return '%(time)s ago' % {'time': timesince(value).split(', ')[0]}
+@register.filter()
+def addDays(days):
+   newDate = date.today() + timedelta(days=days)
+   return newDate
+
+
+@register.filter
+def days_until(date):
+    delta = datetime.date(date) - datetime.now().date()
+    return delta.days
+
+@register.filter
+def subtract(value, arg):
+    return value - arg
+
+@register.filter()
+def to_int(value):
+    return int(value)

@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.utils.safestring import mark_safe
 
-from instagram.models import Post, Comment, Tag
+from instagram.models import Post, Comment, Tag, PostImage
 
 
 # admin.site.register(Post)
@@ -37,7 +37,14 @@ class CommentAdmin(admin.ModelAdmin):
 class TagAdmin(admin.ModelAdmin):
     pass
 
-
-
-
-# admin.site.register(Post, PostAdmin)
+# @admin.register(PostImage)
+# class PhotoInline(admin.TabularInline):
+#     model = PostImage
+#
+@admin.register(PostImage)
+class ImageAdmin(admin.ModelAdmin):
+    pass
+#     inlines = [PhotoInline, ]
+#
+#
+# admin.site.register(ImageAdmin)

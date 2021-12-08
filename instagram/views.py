@@ -4,6 +4,8 @@ from urllib.parse import quote
 
 import pandas as pd
 from io import StringIO
+
+from django.forms import modelformset_factory, inlineformset_factory
 from django.http import HttpResponse
 
 from django.contrib import messages
@@ -21,8 +23,8 @@ from django.views.generic import ListView, DetailView, ArchiveIndexView, YearArc
     DeleteView
 
 from instagram.decorator import post_ownership_required, post_delete_ownership_required
-from instagram.forms import PostForm
-from instagram.models import Post
+from instagram.forms import PostForm, NotClearableFileInput
+from instagram.models import Post, PostImage
 
 
 # post_list = login_required(ListView.as_view(model=Post, paginate_by=1))
@@ -70,9 +72,6 @@ class PostListView(LoginRequiredMixin, ListView):
         # qs = super().get_queryset().filter(author=self.request.user, created_at__gte = timezone.now() - timedelta(days=1))
 
         qs = super().get_queryset().filter(author=self.request.user)
-        # print(self.request.created_at)
-
-        # qs = Post.objects.all()
 
         q = self.request.GET.get('q', '')
         if q:
@@ -81,69 +80,102 @@ class PostListView(LoginRequiredMixin, ListView):
 
 post_list = PostListView.as_view()
 
-# @login_required
-# def post_new(request):
-#     if request.method == "POST":
-#         form = PostForm(request.POST, request.FILES)
-#         if form.is_valid(): # 유효성 검사가 수행됨!
-#             post = form.save(commit=False)
-#             post.author = request.user
-#             post = form.save()
-#             messages.success(request, '포스팅을 저장했습니다.')
-#             # get_absolute_url이 model에 적용 되어 있어야지만 아래 redirect가 반응한다.
-#             return redirect(post)
-#     else:
-#         form = PostForm()
+@login_required
+def post_new(request):
+
+    if request.method == "POST":
+        # post = Post()
+        form = PostForm(request.POST, request.FILES)
+
+        if form.is_valid(): # 유효성 검사가 수행됨!
+            post = form.save(commit=False)
+
+            post.author = request.user
+            post.save()
+
+            if(len(request.FILES.getlist('images')) > 10):
+                messages.error(request, "이미지는 10개 이하로만 업로드가 가능합니다.")
+                return redirect(reverse('instagram:post_new'))
+
+            # get_absolute_url이 model에 적용 되어 있어야지만 아래 redirect가 반응한다.
+            for img in request.FILES.getlist('images'):
+                # Photo 객체를 하나 생성한다.
+                photo = PostImage()
+                # 외래키로 현재 생성한 Post의 기본키를 참조한다.
+                photo.post = post
+                # pictures로부터 가져온 이미지 파일들을 저장한다.
+                photo.image = img
+                # 데이터베이스에 저장
+                photo.save()
+
+            messages.success(request, '포스팅을 저장했습니다.')
+            return redirect(post)
+    else:
+        form = PostForm()
+
+    return render(request, 'instagram/post_form.html',{
+        'form': form,
+        'post': None,
+    })
+
+# @method_decorator(login_required, 'get')
+# @method_decorator(login_required, 'post')
+# class PostCreateView(CreateView):
+#     model = Post
+#     form_class = PostForm
 #
-#     return render(request, 'instagram/post_form.html',{
-#         'form': form,
-#         'post': None,
-#     })
-
-@method_decorator(login_required, 'get')
-@method_decorator(login_required, 'post')
-class PostCreateView(CreateView):
-    model = Post
-    form_class = PostForm
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        messages.success(self.request, '포스팅을 저장했습니다')
-        return super().form_valid(form)
-
-
-post_new = PostCreateView.as_view()
+#     # def post(self, request, *args, **kwargs):
+#     #     files = request.FILES.getlist('imgs')
+#     #     for img in files:
+#     #         photo = PostImage()
+#     #         photo.post = Post
+#     #         photo.img = img
+#     #         photo.save(())
+#
+#     def form_valid(self, form):
+#         self.object = form.save(commit=False)
+#         self.object.author = self.request.user
+#         messages.success(self.request, '포스팅을 저장했습니다')
+#         return super().form_valid(form)
+#
+#
+# post_new = PostCreateView.as_view()
 
 
 
 # updateview class를 함수형 뷰로 구현한것
-# @login_required
-# def post_edit(request, pk):
-#     post = get_object_or_404(Post, pk=pk)
-#
-#     if post.author != request.user:
-#         messages.error(request, '작성자만 수정할 수 있습니다.')
-#         return redirect(post)
-#
-#
-#     if request.method == "POST":
-#         form = PostForm(request.POST, request.FILES, instance=post)
-#         if form.is_valid():
-#             post = form.save()
-#             messages.success(request, '포스팅을 수정했습니다.')
-#             # post.author = request.user
-#             # request.user -> 현재 로그인 유저 instance
-#             # post.save()
-#             # get_absolute_url이 model에 적용 되어 있어야지만 아래 redirect가 반응한다.
-#             return redirect(post)
-#     else:
-#         form = PostForm(instance=post)
-#
-#     return render(request, 'instagram/post_form.html',{
-#         'form': form,
-#         'post': post,
-#     })
+@login_required
+def post_edit(request, pk):
+
+    post = get_object_or_404(Post, pk=pk)
+
+    if post.author != request.user:
+        messages.error(request, '작성자만 수정할 수 있습니다.')
+        return redirect(post)
+
+    ImgFormSet = inlineformset_factory(Post, PostImage, fields=('image', ), can_delete=True, extra=10, max_num=10, widgets={'image': NotClearableFileInput})
+    if request.method == "POST":
+        form = ImgFormSet(request.POST, request.FILES, instance=post)
+        # form_img = ImageForm(request.POST, request.FILES, instance=post_img)
+
+        if form.is_valid():
+            messages.success(request, '포스팅을 수정했습니다.')
+            form.save()
+
+            # post = form.save(commit=False)
+
+            # post.author = request.user
+            # request.user -> 현재 로그인 유저 instance
+            # post.save()
+            # get_absolute_url이 model에 적용 되어 있어야지만 아래 redirect가 반응한다.
+            return redirect(post)
+    else:
+        form = ImgFormSet(instance=post)
+
+    return render(request, 'instagram/post_formset.html', {
+        'formset': form,
+        'post': post,
+    })
 
 
 @method_decorator(post_ownership_required, 'get')
@@ -161,13 +193,22 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
         return qs
 
 
-
     def form_valid(self, form):
+        # post = form.save()
+        # for img in self.request.FILES.getlist('imgs'):
+        #     # Photo 객체를 하나 생성한다.
+        #     photo = PostImage()
+        #     # 외래키로 현재 생성한 Post의 기본키를 참조한다.
+        #     photo.post = post
+        #     # imgs로부터 가져온 이미지 파일 하나를 저장한다.
+        #     photo.image = img
+        #     # 데이터베이스에 저장
+        #     photo.save()
         messages.success(self.request, '포스팅을 수정했습니다.')
         return super().form_valid(form)
 
 
-post_edit = PostUpdateView.as_view()
+# post_edit = PostUpdateView.as_view()
 
 # @login_required
 # def post_list(request):
@@ -214,21 +255,14 @@ class MyView(LoginRequiredMixin, View):
 # @method_decorator(post_ownership_required, 'get')
 class PostDetailView(DetailView):
     model = Post
-    # queryset = Post.objects.filter(author_id=)
-
-    yesterday = datetime.today() - timedelta(days=1)
-    # print()
-    # print(yesterday)
+    yesterday = datetime.today() - timedelta(seconds=86400)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["yesterday"] = self.yesterday
         return context
 
-
     def get_queryset(self):
-        # 로그인이 되어있지 않으면 공개된것만 봐라!
-        # qs = super().get_queryset()
 
         # qs = super().get_queryset().filter(author=self.request.user, created_at__gte=timezone.now() - timedelta(days=1))
         qs = super().get_queryset().filter(author=self.request.user)

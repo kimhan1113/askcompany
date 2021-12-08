@@ -28,16 +28,41 @@
 
 {#    대상이 있으면 yesno로 표기해서 나타낼 수 있다.#}
     <div>
-    목록
+    A/S 목록
         <ul>
-            <li>
-                {{ post.as_1|yesno:"as_1,as_2"}}
-            </li>
+            {% if post.as_1 %}
+                <li>
+                    as_1
+                </li>
+
+            {% endif %}
+            {% if post.as_2 %}
+                <li>
+                    as_2
+                </li>
+            {% endif %}
+            {% if post.as_3 %}
+                <li>
+                    as_3
+                </li>
+            {% endif %}
+{#                {{ post.as_1|yesno:"as_1,as_2"}}#}
         </ul>
 
-    </div>
+        {% for photo in post.postimage_set.all%}
+            <img src="{{photo.image.url}}" width="700"><br>
+            <hr>
+        {% endfor %}
 
-    <hr>
+    <div>
+
+
+{#    </div>#}
+{##}
+{#        {{ post.created_yesterday|date:"Y-m-d h:i:s" }}#}
+{#    </div>#}
+
+{#        {{ age|post.created_at }}#}
     <a href="{% url 'instagram:post_list' %}" class="btn btn-primary">
         목록
     </a>
@@ -46,13 +71,12 @@
 
     {% now "" as todays_date %}
 
-{#    {{ post.created_at|date:"Y-m-d h:i:s" }}#}
-
-    {% if post.created_at|date:"Y-m-d h:i:s" > yesterday|date:"Y-m-d h:i:s" %}
+    {% if post.check_oneday %}
         <a href="{% url 'instagram:post_edit' post.pk %}" class="btn btn-info">
             수정
         </a>
     {% endif %}
+
 {#    {{ yesterday }}#}
     <a href="{% url 'instagram:post_delete' post.pk %}" class="btn btn-danger">
         삭제
