@@ -23,7 +23,7 @@ from django.views.generic import ListView, DetailView, ArchiveIndexView, YearArc
     DeleteView
 
 from instagram.decorator import post_ownership_required, post_delete_ownership_required
-from instagram.forms import PostForm, NotClearableFileInput
+from instagram.forms import PostForm, NotClearableFileInput, PostNonImageForm
 from instagram.models import Post, PostImage
 
 
@@ -141,8 +141,6 @@ def post_new(request):
 #
 # post_new = PostCreateView.as_view()
 
-
-
 # updateview class를 함수형 뷰로 구현한것
 @login_required
 def post_edit(request, pk):
@@ -155,26 +153,27 @@ def post_edit(request, pk):
 
     ImgFormSet = inlineformset_factory(Post, PostImage, fields=('image', ), can_delete=True, extra=10, max_num=10, widgets={'image': NotClearableFileInput})
     if request.method == "POST":
+        post_form = PostNonImageForm(request.POST, request.FILES, instance=post)
         form = ImgFormSet(request.POST, request.FILES, instance=post)
         # form_img = ImageForm(request.POST, request.FILES, instance=post_img)
 
-        if form.is_valid():
-            messages.success(request, '포스팅을 수정했습니다.')
+        if form.is_valid() and post_form.is_valid():
+
+            post_form.save()
+
+            messages.success(request, '내역을 수정했습니다.')
             form.save()
 
-            # post = form.save(commit=False)
-
-            # post.author = request.user
-            # request.user -> 현재 로그인 유저 instance
-            # post.save()
             # get_absolute_url이 model에 적용 되어 있어야지만 아래 redirect가 반응한다.
             return redirect(post)
     else:
         form = ImgFormSet(instance=post)
+        post_form = PostNonImageForm(instance=post)
 
     return render(request, 'instagram/post_formset.html', {
         'formset': form,
         'post': post,
+        'post_form': post_form,
     })
 
 

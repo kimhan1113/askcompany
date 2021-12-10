@@ -11,57 +11,63 @@
 
 {% block content %}
 
+    <div class="card mb-4">
 
-    <h2>Author: {{ post.author }}</h2>
+        <div class="card-header p-3">
+            <h2>미터점 : {{ post.author }}</h2>
+        </div>
 
-        {% if post.photo %}
+        <div class="card-body">
+            {{ post.message|linebreaks }}
+            <hr>
+        </div>
+
+        <div class="card-body">
             <div>
-                <img src="{{ post.photo.url }}" alt="" width="600px">
+                <h3>A/S 목록</h3>
             </div>
+            <ul>
+                {% if post.as_1 %}
+                    <li>
+                        as_1
+                    </li>
 
-        {% endif %}
+                {% endif %}
+                {% if post.as_2 %}
+                    <li>
+                        as_2
+                    </li>
+                {% endif %}
+                {% if post.as_3 %}
+                    <li>
+                        as_3
+                    </li>
+                {% endif %}
+{#                {{ post.as_1|yesno:"as_1,as_2"}}#}
+            </ul>
+            <hr>
+        </div>
 
-{#    linebreaks를 넣어야 개행이 적용된다#}
-    <div class="mt-2">
-        {{ post.message|linebreaks }}
+        <div class="card-body">
+            {% for photo in post.postimage_set.all%}
+                <img src="{{photo.image.url}}" width="700"><br>
+                <hr>
+            {% endfor %}
+        </div>
+
     </div>
 
+
+
+
+{#    linebreaks를 넣어야 개행이 적용된다#}
+
 {#    대상이 있으면 yesno로 표기해서 나타낼 수 있다.#}
-    <div>
-    A/S 목록
-        <ul>
-            {% if post.as_1 %}
-                <li>
-                    as_1
-                </li>
-
-            {% endif %}
-            {% if post.as_2 %}
-                <li>
-                    as_2
-                </li>
-            {% endif %}
-            {% if post.as_3 %}
-                <li>
-                    as_3
-                </li>
-            {% endif %}
-{#                {{ post.as_1|yesno:"as_1,as_2"}}#}
-        </ul>
-
-        {% for photo in post.postimage_set.all%}
-            <img src="{{photo.image.url}}" width="700"><br>
-            <hr>
-        {% endfor %}
-
-    <div>
-
 
 {#    </div>#}
 {##}
 {#        {{ post.created_yesterday|date:"Y-m-d h:i:s" }}#}
 {#    </div>#}
-
 {#        {{ age|post.created_at }}#}
     <a href="{% url 'instagram:post_list' %}" class="btn btn-primary">
         목록

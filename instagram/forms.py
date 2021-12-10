@@ -56,3 +56,14 @@ class PostForm(ModelForm):
         if message:
             message = re.sub(r'[a-zA-Z]+', '', message)
         return message
+
+class PostNonImageForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = Post
+        fields = [
+            'message', 'car_number', 'fran_name', 'as_1', 'as_2', 'as_3'
+        ]

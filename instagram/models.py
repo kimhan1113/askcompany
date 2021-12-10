@@ -20,7 +20,7 @@ class Post(models.Model):
 
 
     # 차량번호
-    car_number = models.CharField(max_length=11, blank=True)
+    car_number = models.CharField(max_length=13, blank=True)
     # 운수사명
     fran_name = models.CharField(max_length=10, blank=True)
 
@@ -60,7 +60,7 @@ class Post(models.Model):
         local_tz = pytz.timezone('Asia/Seoul')
         utc = pytz.UTC
         created_at = self.created_at.replace(tzinfo=pytz.utc).astimezone(local_tz).timestamp()
-        yesterday = (datetime.today() - timedelta(days=1.5)).replace(tzinfo=pytz.utc).timestamp()
+        yesterday = (datetime.today() - timedelta(days=1.2)).replace(tzinfo=pytz.utc).timestamp()
 
 
         # created_at_date = self.created_at.replace(tzinfo=pytz.utc).astimezone(local_tz)
@@ -125,7 +125,7 @@ class Tag(models.Model):
 
 class PostImage(models.Model):
     post = models.ForeignKey(Post, default=None, on_delete=models.CASCADE, null=True)
-    image = models.ImageField(upload_to='instagram/post/%Y%m%d', blank=True)
+    image = models.ImageField(upload_to='instagram/post/%Y%m%d', blank=True, null=True)
 
     # def __str__(self):
     #     return self.post.message

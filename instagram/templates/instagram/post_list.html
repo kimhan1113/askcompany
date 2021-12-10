@@ -19,8 +19,9 @@
 
     <table class="table table-bordered table-hover">
         <div class="mb-2">
-            ※ 업로드 후 하루가 지나면 수정할 수 없습니다.
+            ※ 업로드 후 약 하루가 지나면 수정할 수 없습니다.
         </div>
+
         <thead class="table-secondary">
 
             <th>포스트 번호</th>
@@ -28,9 +29,10 @@
             <th>미터점</th>
             <th>차량 번호</th>
             <th>A/S 목록 건수</th>
-            <th>이미지</th>
+{#            <th>이미지</th>#}
             <th>메세지</th>
-            <th>등록날짜</th>
+            <th>등록 날짜</th>
+            <th>수정 날짜</th>
 
         </thead>
 
@@ -58,14 +60,14 @@
                         {{ post.sum_as }}건
                     </td>
 
-                    <td>
-                        {% if post.photo %}
-                            <img src="{{ post.photo.url }}" alt="" style="width: 300px;">
-                        {% else %}
-                                No Photo
-                        {% endif %}
-
-                    </td>
+{#                    <td>#}
+{#                        {% if post.photo %}#}
+{#                            <img src="{{ post.photo.url }}" alt="" style="width: 300px;">#}
+{#                        {% else %}#}
+{#                                No Photo#}
+{#                        {% endif %}#}
+{##}
+{#                    </td>#}
 
                     <td>
     {#                    <a href="{% url 'instagram:post_detail' post.pk %}">#}
@@ -78,6 +80,10 @@
                     </td>
                     <td>
                         {{ post.created_at }}
+                    </td>
+
+                    <td>
+                        {{ post.updated_at }}
                     </td>
 
                 </tr>
