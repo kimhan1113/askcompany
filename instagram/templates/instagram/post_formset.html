@@ -5,44 +5,60 @@
 
     <form action="" method="post" enctype="multipart/form-data">
 {#        {{ formset.non_form_errors.as_ul }}#}
-        <h2 class="pb-3">이미지 변경</h2>
-        <hr>
-        {{ formset.management_form }}
-        {% for hidden in formset.hidden_fields %}
-            {{ hidden }}
-        {% endfor %}
-        <table>
-            {% csrf_token %}
-            {% for form in formset %}
-                {{ form.as_p }}
-                <hr>
-            {% endfor %}
-            <div>
-                {% bootstrap_form post_form %}
+
+        <div class="card mb-3">
+
+
+            <div class="card-header">
+                <h2 class="pb-3">이미지 업로드</h2>
             </div>
 
-        </table>
+            <div class="card-body">
+                <table>
+                    {% csrf_token %}
+                    {% for form in formset %}
+                        {{ form.as_p }}
+                        <hr>
+                    {% endfor %}
+                </table>
+
+            </div>
+            {{ formset.management_form }}
+            {% for hidden in formset.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+        </div>
 
 
+        <div class="card">
+            <div class="card-header mt-2">
+                <h2>
+                    A/S 목록
+                </h2>
+                <h5 class="text-muted">
+                    (A/S 받을 리스트에 체크)
+                </h5>
+            </div>
 
-        <table>
-{#            {{ formset.as_p }}#}
-
-{##}
-{#            {% for field in formset.visible_fields %}#}
-{#                <div class="fieldWrapper">#}
-{#                    {{ field.errors }}#}
-{#                    {{ field.label_tag }} {{ field }}#}
+            <div class="card-body">
+                <table>
+                    {{ post_form }}
+                </table>
+{#                <div class="mb-2">#}
+{#                    A/S 리스트1 :#}
+{#                    <input type="checkbox" name="as_1" class="form-check-input" id="id_as_1">#}
 {#                </div>#}
-{#            {% endfor %}#}
-{##}
-
-{#            {{ formset }}#}
-
-        </table>
-
-
-
+{#                <div class="mb-2">#}
+{#                    A/S 리스트2 :#}
+{#                    <input type="checkbox" name="as_2" class="form-check-input" id="id_as_2">#}
+{#                </div>#}
+{#                <div class="mb-2">#}
+{#                    A/S 리스트3 :#}
+{#                    <input type="checkbox" name="as_3" class="form-check-input" id="id_as_3">#}
+{#                </div>#}
+            </div>
+        </div>
 
         <div class="mt-3">
             <input type="submit" value="저장" class="btn btn-primary"/>

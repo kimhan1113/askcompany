@@ -65,5 +65,6 @@ class PostNonImageForm(ModelForm):
     class Meta:
         model = Post
         fields = [
-            'message', 'car_number', 'fran_name', 'as_1', 'as_2', 'as_3'
+            # 'message', 'car_number', 'fran_name',
+            'as_1', 'as_2', 'as_3'
         ]

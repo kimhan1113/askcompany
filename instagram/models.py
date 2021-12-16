@@ -11,6 +11,7 @@ import pytz
 # min_length_validator("hello")
 from django.shortcuts import resolve_url
 from django.urls import reverse
+from django.utils import timezone
 
 
 class Post(models.Model):
@@ -25,9 +26,9 @@ class Post(models.Model):
     fran_name = models.CharField(max_length=10, blank=True)
 
     # A/S 리스트 Boolean
-    as_1 = models.BooleanField(default=False, verbose_name='as_1')
-    as_2 = models.BooleanField(default=False, verbose_name='as_2')
-    as_3 = models.BooleanField(default=False, verbose_name='as_3')
+    as_1 = models.BooleanField(default=False, verbose_name='A/S 목록 1')
+    as_2 = models.BooleanField(default=False, verbose_name='A/S 목록 2')
+    as_3 = models.BooleanField(default=False, verbose_name='A/S 목록 3')
 
     photo = models.ImageField(blank=True, upload_to='instagram/post/%Y%m%d')
 
@@ -59,9 +60,15 @@ class Post(models.Model):
     def check_oneday(self):
         local_tz = pytz.timezone('Asia/Seoul')
         utc = pytz.UTC
-        created_at = self.created_at.replace(tzinfo=pytz.utc).astimezone(local_tz).timestamp()
-        yesterday = (datetime.today() - timedelta(days=1.2)).replace(tzinfo=pytz.utc).timestamp()
 
+        # created_at = self.created_at.replace(tzinfo=pytz.utc).astimezone(local_tz).timestamp()
+        created_at = self.created_at.replace(tzinfo=pytz.utc).astimezone(local_tz)
+
+        # yesterday = (datetime.today() - timedelta(days=1.2)).replace(tzinfo=pytz.utc).timestamp()
+        yesterday = (timezone.now() - timedelta(days=1)).replace(tzinfo=pytz.utc).astimezone(local_tz)
+
+        # print(yesterday)
+        # print(created_at)
 
         # created_at_date = self.created_at.replace(tzinfo=pytz.utc).astimezone(local_tz)
         # yesterday_date = (datetime.today() - timedelta(days=1.5)).replace(tzinfo=pytz.utc)

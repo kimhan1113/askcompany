@@ -19,33 +19,35 @@
 
         <div class="card-body">
             {{ post.message|linebreaks }}
-            <hr>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">A/S 목록</h4>
         </div>
 
         <div class="card-body">
-            <div>
-                <h3>A/S 목록</h3>
-            </div>
-            <ul>
-                {% if post.as_1 %}
-                    <li>
-                        as_1
-                    </li>
 
-                {% endif %}
-                {% if post.as_2 %}
-                    <li>
-                        as_2
-                    </li>
-                {% endif %}
-                {% if post.as_3 %}
-                    <li>
-                        as_3
-                    </li>
-                {% endif %}
-{#                {{ post.as_1|yesno:"as_1,as_2"}}#}
-            </ul>
-            <hr>
+            {% if post.as_1 %}
+                <li style="list-style-type: circle;">as_1</li>
+            {% endif %}
+            {% if post.as_2 %}
+                <li style="list-style-type: circle;">as_2</li>
+            {% endif %}
+            {% if post.as_3 %}
+                <li style="list-style-type: circle;">as_3</li>
+            {% endif %}
+
+        </div>
+    </div>
+
+{#        <div>#}
+{#             {{ post_form }}#}
+{#        </div>#}
+
+    <div class="card mt-4 mb-4">
+        <div class="card-header">
+            <h4 class="card-title">A/S 이미지</h4>
         </div>
 
         <div class="card-body">
@@ -56,6 +58,9 @@
         </div>
 
     </div>
+
+
+
 
 
 

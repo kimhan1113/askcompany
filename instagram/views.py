@@ -159,9 +159,8 @@ def post_edit(request, pk):
 
         if form.is_valid() and post_form.is_valid():
 
-            post_form.save()
-
             messages.success(request, '내역을 수정했습니다.')
+            post_form.save()
             form.save()
 
             # get_absolute_url이 model에 적용 되어 있어야지만 아래 redirect가 반응한다.
